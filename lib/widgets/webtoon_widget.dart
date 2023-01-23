@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webflix/screens/detail_screen.dart';
 
 class Webtoon extends StatelessWidget {
   final String title, thumb, id;
@@ -14,7 +15,17 @@ class Webtoon extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('ee');
+        // 1.Nav로 push
+        Navigator.push(
+          context,
+          //2. route는 DetailScreen를 애니메이션으로 감싸서 render
+          // 실제로 다른 페이지로 간 것이 아닌 또 다른 statelessWidget을 렌더했을 뿐임.
+          MaterialPageRoute(
+            fullscreenDialog: false,
+            builder: (context) =>
+                DetailScreen(title: title, thumb: thumb, id: id),
+          ),
+        );
       },
       child: Column(
         children: [
