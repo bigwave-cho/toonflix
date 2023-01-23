@@ -37,22 +37,13 @@ class HomeScreen extends StatelessWidget {
             if (snapshot.hasData) {
               // ListView.builder는 사용자가 보는 것만 로드하고
               //안보는 것들은 메모리에서 제외시킨다.
-              return ListView.separated(
-                itemBuilder: (context, index) {
-                  //print(index); // 스크롤해보면 해당 아이템의 index가 디버그 콘솔에 나타남.
-                  //index: 어떤 아이템이 빌드되는지 알 수 있는 요소
-                  var webtoon = snapshot.data![index];
-
-                  return Text(webtoon.title);
-                },
-                scrollDirection: Axis.horizontal,
-                itemCount: snapshot.data!.length,
-                // separatorBuilder는 리스트 사이에 추가해줄 위젯을 리턴.
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    width: 20,
-                  );
-                },
+              return Column(
+                children: [
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Expanded(child: makeList(snapshot)),
+                ],
               );
             }
             return const Center(
@@ -61,5 +52,55 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ));
+  }
+
+  //전구표시 -> method 추출 -> 아래처럼 분리됨.
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+    return ListView.separated(
+      itemBuilder: (context, index) {
+        //print(index); // 스크롤해보면 해당 아이템의 index가 디버그 콘솔에 나타남.
+        //index: 어떤 아이템이 빌드되는지 알 수 있는 요소
+        var webtoon = snapshot.data![index];
+
+        return Column(
+          children: [
+            Container(
+              width: 250,
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 15,
+                      offset: const Offset(10, 10),
+                      color: Colors.black.withOpacity(0.5),
+                    )
+                  ]),
+              child: Image.network(webtoon.thumb),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              webtoon.title,
+              style: const TextStyle(
+                fontSize: 22,
+              ),
+            ),
+          ],
+        );
+      },
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 20,
+      ), // separatorBuilder는 리스트 사이에 추가해줄 위젯을 리턴.
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          width: 40,
+        );
+      },
+    );
   }
 }
