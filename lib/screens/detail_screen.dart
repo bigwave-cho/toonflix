@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webflix/models/webtoon_detail_model.dart';
 import 'package:webflix/models/webtoon_episode_model.dart';
 import 'package:webflix/services/api_service.dart';
@@ -22,6 +23,30 @@ class _DetailScreenState extends State<DetailScreen> {
   late Future<WebtoonDetailModel> webtoon;
   late Future<List<WebtoonEpisodeModel>> episodes;
 
+  late SharedPreferences prefs;
+  bool isLiked = false;
+
+  Future initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    print(prefs.getStringList('isLiked'));
+    // 복붙
+    // 1. likedToons 배열을 가져오고
+    final likedToons = prefs.getStringList('likedToons');
+
+    //2. 처음 앱을 사용하는 경우 likedToons가 없을 것이기 때문에.
+    if (likedToons != null) {
+      //3. 있으면 해당 위젯 아이디가 있는지 확인해서
+      if (likedToons.contains(widget.id) == true) {
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } else {
+      //3. 없으면 create 배열
+      await prefs.setStringList('likedToons', <String>[]);
+    }
+  }
+
 // home_screen의 ApiService get 요청이 아래와 같은 절차 없이
 //바로 이루어질 수 있었던 이유는 인자로 아무것도 넘길 필요가 없었기 때문.
   @override
@@ -33,6 +58,26 @@ class _DetailScreenState extends State<DetailScreen> {
     // 얘네 Future들임. 따라서 FutureBuilder 통해 렌더링할거
     webtoon = ApiService.getToonById(widget.id);
     episodes = ApiService.getLatestEpisodesById(widget.id);
+    initPrefs();
+  }
+
+  onHeartTap() async {
+    final likedToons = prefs.getStringList('likedToons');
+    // likeToons 리스트를 가져와서 수정을 해준 다음
+    if (likedToons != null) {
+      if (isLiked) {
+        likedToons.remove(widget.id);
+      } else {
+        likedToons.add(widget.id);
+      }
+
+      // 기존 likedToons 배열을 덮어버리기.
+      await prefs.setStringList('likedToons', likedToons);
+      setState(() {
+        isLiked = !isLiked;
+      });
+      print(likedToons);
+    }
   }
 
   @override
@@ -44,6 +89,14 @@ class _DetailScreenState extends State<DetailScreen> {
         elevation: 2,
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
+        actions: [
+          IconButton(
+            onPressed: onHeartTap,
+            icon: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+            ),
+          ),
+        ],
         title: Text(
           widget.title,
           style: const TextStyle(
