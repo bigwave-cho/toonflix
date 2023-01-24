@@ -30,6 +30,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
+        // FutureBuilder가 async/await 수행해줌.
         body: FutureBuilder(
           //future 기다려라
           future: webtoons,

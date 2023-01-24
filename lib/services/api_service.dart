@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:webflix/models/webtoon_detail_model.dart';
+import 'package:webflix/models/webtoon_episode_model.dart';
 import 'package:webflix/models/webtoon_model.dart';
 
 class ApiService {
@@ -25,9 +27,38 @@ class ApiService {
       for (var webtoon in webtoons) {
         //webtoonModel클래스의 fromJson 컨트트럭터에 의해
         // 인스턴스화 된 데이터들이 차례대로 webtoonInstatnces 배열에 추가됨.
-        webtoonInstances.add(WebtoonModel.fromJson(webtoon));
+        final instance = WebtoonModel.fromJson(webtoon);
+        webtoonInstances.add(instance);
       }
       return webtoonInstances;
+    }
+    throw Error();
+  }
+
+  static Future<WebtoonDetailModel> getToonById(String id) async {
+    final url = Uri.parse("$baseUrl/$id");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final webtoon = jsonDecode(response.body);
+
+      return WebtoonDetailModel.fromJson(webtoon);
+    }
+    throw Error();
+  }
+
+  static Future<List<WebtoonEpisodeModel>> getLatestEpisodesById(
+      String id) async {
+    List<WebtoonEpisodeModel> episodesInstances = [];
+
+    final url = Uri.parse("$baseUrl/$id/episodes");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final episodes = jsonDecode(response.body);
+
+      for (var episode in episodes) {
+        episodesInstances.add(WebtoonEpisodeModel.fromJson(episode));
+      }
+      return episodesInstances;
     }
     throw Error();
   }
