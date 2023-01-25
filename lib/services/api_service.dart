@@ -11,6 +11,8 @@ class ApiService {
   static const String today = "today";
 
   static Future<List<WebtoonModel>> getTodaysToons() async {
+    // 웹툰 리스트를 받아오는 배열로
+    // webtoon_model.dart에 해당 모델을 만들기.
     List<WebtoonModel> webtoonInstances = [];
 
     final url = Uri.parse('$baseUrl/$today');
@@ -30,6 +32,7 @@ class ApiService {
         final instance = WebtoonModel.fromJson(webtoon);
         webtoonInstances.add(instance);
       }
+      //데이터를 가진 인스턴스들을 리턴함.
       return webtoonInstances;
     }
     throw Error();

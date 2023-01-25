@@ -6,6 +6,7 @@ import 'package:webflix/widgets/webtoon_widget.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
+  // ApiService의 getTodaysToons 메서드가 반환하는 Future타입의 webtoonModel 배열 할당.
   final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
 
   @override
@@ -63,7 +64,7 @@ class HomeScreen extends StatelessWidget {
         //print(index); // 스크롤해보면 해당 아이템의 index가 디버그 콘솔에 나타남.
         //index: 어떤 아이템이 빌드되는지 알 수 있는 요소
         var webtoon = snapshot.data![index];
-
+        // webtoon_widget에 웹툰 데이터 전달.
         return Webtoon(
           title: webtoon.title,
           thumb: webtoon.thumb,

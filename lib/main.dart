@@ -13,6 +13,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: '오늘의 웹툰',
       home: HomeScreen(),
     );
   }

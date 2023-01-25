@@ -27,10 +27,10 @@ class _DetailScreenState extends State<DetailScreen> {
   bool isLiked = false;
 
   Future initPrefs() async {
+    // shared_preferences : 간단한 데이터를 기기에 저장해놓고 read/write 할 수 있는 패키지(설치요)
     prefs = await SharedPreferences.getInstance();
-    print(prefs.getStringList('isLiked'));
     // 복붙
-    // 1. likedToons 배열을 가져오고
+    // 1. likedToons 배열을 가져오고(첫 실행 시 likedToons란 배열이 없을 것이라 null 할당)
     final likedToons = prefs.getStringList('likedToons');
 
     //2. 처음 앱을 사용하는 경우 likedToons가 없을 것이기 때문에.
@@ -55,13 +55,14 @@ class _DetailScreenState extends State<DetailScreen> {
     // state class에서 widget.id 처럼 참조하는 이유는
     // 별개의 클래스에서 작동하기 때문.
     // widget은 부모 클래스를 가리킴.
-    // 얘네 Future들임. 따라서 FutureBuilder 통해 렌더링할거
+    // webtoon, episodes는 Future타입. 따라서 FutureBuilder 통해 렌더링할거
+    //print(widget); // DetailScreen 가리킴
     webtoon = ApiService.getToonById(widget.id);
     episodes = ApiService.getLatestEpisodesById(widget.id);
     initPrefs();
   }
 
-  onHeartTap() async {
+  void onHeartTap() async {
     final likedToons = prefs.getStringList('likedToons');
     // likeToons 리스트를 가져와서 수정을 해준 다음
     if (likedToons != null) {
@@ -76,7 +77,6 @@ class _DetailScreenState extends State<DetailScreen> {
       setState(() {
         isLiked = !isLiked;
       });
-      print(likedToons);
     }
   }
 
@@ -168,6 +168,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   for (var episode in snapshot.data!)
+                                    // /widgets/episode_widget.dart
                                     Episode(
                                         episode: episode, webtoonId: widget.id)
                                 ],

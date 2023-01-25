@@ -13,7 +13,7 @@ class Episode extends StatelessWidget {
   final String webtoonId;
 
   onButtonTap() async {
-    // url launcher 설치하고 설정해줘야 사용가능.
+    // url_launcher 설치하고 설정해줘야 사용가능.
     await launchUrlString(
         "https://comic.naver.com/webtoon/detail?titleId=$webtoonId&no=${episode.id}");
   }
